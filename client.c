@@ -28,10 +28,10 @@ int main(void)
     work.b = 10;
 
     // initialize the thread pool
-    pool_init();
+    pool_init(5);
 
     // submit the work to the queue
-    pool_submit(&add,&work);
+    pool_submit(&add, &work);
 
     // may be helpful 
     //sleep(3);
