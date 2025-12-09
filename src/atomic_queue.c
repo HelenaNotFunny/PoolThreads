@@ -1,14 +1,22 @@
-#include "queue.h"
+//
+// Created by icarob-eng, HelenaNotFunny, gabriel26077, DPDck972 (Rodrigo) on 08/12/25.
+//
+
+#include <pthread.h>
+#include <semaphore.h>
 #include <stdlib.h>
 
-void queue_init(queue_t *q) {
+#include "atomic_queue.h"
+
+
+void queue_init(atomic_queue_t *q) {
     q->head = NULL;
     q->tail = NULL;
     pthread_mutex_init(&q->lock, NULL);
     sem_init(&q->task_count, 0, 0);
 }
 
-void queue_push(queue_t *q, task_t t) {
+void queue_push(atomic_queue_t *q, task_t t) {
     // Aloca o nó
     queue_node_t *new_node = (queue_node_t *)malloc(sizeof(queue_node_t));
     new_node->task = t;
@@ -31,7 +39,7 @@ void queue_push(queue_t *q, task_t t) {
     sem_post(&q->task_count);
 }
 
-task_t queue_pop(queue_t *q) {
+task_t queue_pop(atomic_queue_t *q) {
     // Aguarda disponibilidade de tarefa
     sem_wait(&q->task_count);
 
@@ -54,7 +62,7 @@ task_t queue_pop(queue_t *q) {
     return task;
 }
 
-void queue_destroy(queue_t *q) {
+void queue_destroy(atomic_queue_t *q) {
     while (q->head != NULL) {
         queue_node_t *temp = q->head;
         q->head = q->head->next;

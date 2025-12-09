@@ -40,30 +40,30 @@ O projeto segue uma arquitetura modular para separar a implementação da biblio
 
 ```plaintext
 threadpool_project/
-├── include/           # CABEÇALHOS PÚBLICOS
-│   ├── threadpool.h   # Contratos da API da Threadpool
-│   └── queue.h        # Definições da Fila (estrutura interna)
+├── include/            # CABEÇALHOS PÚBLICOS
+│   ├── threadpool.h    # Contratos da API da Threadpool
+│   └── atomic_queue.h  # Definições da Fila (estrutura interna)
 │
-├── src/               # CÓDIGO FONTE DA BIBLIOTECA
-│   ├── threadpool.c   # Lógica das threads, workers e sync
-│   └── queue.c        # Implementação da fila thread-safe
+├── src/                # CÓDIGO FONTE DA BIBLIOTECA
+│   ├── threadpool.c    # Lógica das threads, workers e sync
+│   └── atomic_queue.c  # Implementação da fila thread-safe
 │
-├── apps/              # APLICAÇÃO CLIENTE
-│   └── client.c       # Main: Exemplo de uso da biblioteca
+├── examples/           # APLICAÇÃO CLIENTE
+│   └── client.c        # Main: Exemplo de uso da biblioteca
 │
-├── docs/              # DOCUMENTAÇÃO
-│   └── ...            # Diagramas e documentação Doxygen
+├── docs/               # DOCUMENTAÇÃO
+│   └── ...             # Diagramas e documentação Doxygen
 │
-├── report/            # RELATÓRIOS
-│   └── relatorio.pdf  # Análise de desempenho/descrição acadêmica
+├── report/             # RELATÓRIOS
+│   └── relatorio.pdf   # Análise de desempenho/descrição acadêmica
 │
-├── obj/               # OBJETOS TEMPORÁRIOS (Gerado pelo Make)
-│   └── *.o            # Arquivos compilados intermédios
+├── obj/                # OBJETOS TEMPORÁRIOS (Gerado pelo Make)
+│   └── *.o             # Arquivos compilados intermédios
 │
-├── bin/               # EXECUTÁVEIS (Gerado pelo Make)
-│   └── client         # O binário final pronto para rodar
+├── bin/                # EXECUTÁVEIS (Gerado pelo Make)
+│   └── client          # O binário final pronto para rodar
 │
-└── Makefile           # AUTOMAÇÃO DE BUILD
+└── Makefile            # AUTOMAÇÃO DE BUILD
 ```
 
 -----
@@ -118,7 +118,7 @@ make clean
 
 ## 💻 Como Usar a Biblioteca
 
-Abaixo um exemplo simplificado de como utilizar a API no seu `apps/client.c`:
+Abaixo um exemplo simplificado de como utilizar a API no seu `examples/client.c`:
 
 ```c
 #include <stdio.h>

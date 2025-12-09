@@ -5,12 +5,12 @@ CFLAGS = -Wall -Wextra -pthread -g -I./include
 # Estrutura de Pastas
 INCDIR = include
 SRCDIR = src
-APPDIR = apps
+EXMDIR = examples
 OBJDIR = obj
 BINDIR = bin
 
 # Onde vai ficar o executável final
-TARGET = $(BINDIR)/app
+TARGET = $(BINDIR)/examples
 
 # Lista de arquivos fontes da biblioteca (src/*.c)
 SOURCES = $(wildcard $(SRCDIR)/*.c)
@@ -18,7 +18,7 @@ SOURCES = $(wildcard $(SRCDIR)/*.c)
 OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
 # O objeto do cliente é separado
-CLIENT_SRC = $(APPDIR)/client.c
+CLIENT_SRC = $(EXMDIR)/client.c
 CLIENT_OBJ = $(OBJDIR)/client.o
 
 # --- Regras de Compilação ---

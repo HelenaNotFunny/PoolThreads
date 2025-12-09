@@ -7,12 +7,13 @@
 #include <stdio.h>
 
 #include "threadpool.h"
-#include "queue.h"
+#include "atomic_queue.h"
+
 
 // Variáveis estáticas (contexto do módulo)
 static pthread_t *threads = NULL;
 static int thread_count = 0;
-static queue_t task_queue;
+static atomic_queue_t task_queue;
 
 /**
  * Main code of worker thread.

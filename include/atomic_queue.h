@@ -1,3 +1,7 @@
+//
+// Created by icarob-eng, HelenaNotFunny, gabriel26077, DPDck972 (Rodrigo) on 08/12/25.
+//
+
 #ifndef QUEUE_H
 #define QUEUE_H
 
@@ -23,17 +27,17 @@ typedef struct queue_node {
 /**
  * Estrutura principal da fila (Thread-safe).
  */
-typedef struct queue {
+typedef struct atomic_queue {
     queue_node_t *head;
     queue_node_t *tail;
     pthread_mutex_t lock; // Mutex para exclusão mútua
     sem_t task_count;     // Semáforo para sinalizar disponibilidade
-} queue_t;
+} atomic_queue_t;
 
 // Protótipos das funções
-void queue_init(queue_t *q);
-void queue_push(queue_t *q, task_t t);
-task_t queue_pop(queue_t *q);
-void queue_destroy(queue_t *q);
+void queue_init(atomic_queue_t *q);
+void queue_push(atomic_queue_t *q, task_t t);
+task_t queue_pop(atomic_queue_t *q);
+void queue_destroy(atomic_queue_t *q);
 
 #endif // QUEUE_H
