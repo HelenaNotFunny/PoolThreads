@@ -1,5 +1,5 @@
 //
-// Created by icarob-eng, ... on 08/12/25.  # TODO: add your names (1/4)
+// Created by icarob-eng, HelenaNotFunny, gabriel26077, DPDck972 (Rodrigo) on 08/12/25.
 //
 
 /**
@@ -27,6 +27,27 @@ typedef struct {
 }
 task;
 
+// "object" that represents the entity of the queue
+// #data must be a *task ? 
+struct work {
+    void *data;
+    work* next;
+};
+
+// linked list queue
+struct queue_tasks {
+    struct work* head, tail;
+    sem_t works_todo;
+    pthread_mutex_t lock;
+}
+
+void queue_tasks_init(struct queue_task *q){
+    q->head = NULL;
+    q->tail = NULL;
+    sem_init(&q->items, 0, 0);
+    pthread_mutex_init(&q->lock, NULL);
+}
+
 // the work queue  todo: implement queue as linked list
 task *queue_tasks;
 
@@ -45,7 +66,7 @@ task dequeue() {  // todo
 }
 
 // Thread level function that executes the task provided to the thread pool
-void execute(void (*func)(void *p), void *p) {  // todo: removable???
+void execute(void (*func)(void *p), void *p) {  // todo: removable??? #Acho que não e talvez colocar declaração na .h
     (*func)(p);
 }
 
