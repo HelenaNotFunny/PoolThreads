@@ -3,40 +3,34 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "threadpool.h"
 
-struct data
-{
+struct data {
     int a;
     int b;
 };
 
-void add(void *param)
-{
-    struct data *temp;
-    temp = (struct data*)param;
-
-    printf("I add two values %d and %d result = %d\n",temp->a, temp->b, temp->a + temp->b);
+void add(void *param) {
+    struct data *temp = (struct data*)param;
+    printf("Thread %lu: %d + %d = %d\n", pthread_self(), temp->a, temp->b, temp->a + temp->b);
+    // free(temp); // Se usasse malloc, descomentaria aqui
 }
 
-int main(void)
-{
-    // create some work to do
-    struct data work;
-    work.a = 5;
-    work.b = 10;
+int main(void) {
+    pool_init(4); // 4 threads
 
-    // initialize the thread pool
-    pool_init(5);
+    struct data work1 = {5, 10};
+    struct data work2 = {10, 20};
+    struct data work3 = {100, 200};
 
-    // submit the work to the queue
-    pool_submit(&add, &work);
+    pool_submit(&add, &work1);
+    pool_submit(&add, &work2);
+    pool_submit(&add, &work3);
 
-    // may be helpful 
-    //sleep(3);
-
-    pool_shutdown();
+    // O shutdown vai esperar todos terminarem antes de sair
+    pool_shutdown(); 
 
     return 0;
 }

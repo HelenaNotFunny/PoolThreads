@@ -2,109 +2,65 @@
 // Created by icarob-eng, HelenaNotFunny, gabriel26077, DPDck972 (Rodrigo) on 08/12/25.
 //
 
-/**
- * Implementation of thread pool.
- */
-
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <semaphore.h>
+
 #include "threadpool.h"
+#include "queue.h" // Incluimos nossa lib de fila
 
+// Ponteiro para o array de threads
+static pthread_t *array_threads;
+static int n_threads = -1;
 
-// pointer to array of threads of size n_threads
-pthread_t *array_threads;
-int n_threads = -1;
+// Instância global da fila de tarefas
+static queue_t global_queue;
 
-sem_t semaphore_tasks;
-
-// this represents work that has to be 
-// completed by a thread in the pool
-typedef struct {
-    void (*function)(void *p);
-    void *data;
-}
-task;
-
-// "object" that represents the entity of the queue
-// #data must be a *task ? 
-struct work {
-    void *data;
-    work* next;
-};
-
-// linked list queue
-struct queue_tasks {
-    struct work* head, tail;
-    sem_t works_todo;
-    pthread_mutex_t lock;
-}
-
-void queue_tasks_init(struct queue_task *q){
-    q->head = NULL;
-    q->tail = NULL;
-    sem_init(&q->items, 0, 0);
-    pthread_mutex_init(&q->lock, NULL);
-}
-
-// the work queue  todo: implement queue as linked list
-task *queue_tasks;
-
-// insert a task into the queue
-// returns 0 if successful or 1 otherwise, 
-int enqueue(const task t) {
-    // todo: semaphore + linked list queue
-    *queue_tasks = t;
-
-    return 0;
-}
-
-// remove a task from the queue
-task dequeue() {  // todo
-    return *queue_tasks;
-}
-
-// Thread level function that executes the task provided to the thread pool
-void execute(void (*func)(void *p), void *p) {  // todo: removable??? #Acho que não e talvez colocar declaração na .h
+/**
+ * Thread level function that executes the task provided to the thread pool
+ */
+void execute(void (*func)(void *p), void *p) {
     (*func)(p);
 }
 
-// Main code of worker thread, dequeue tasks and executes them
+/**
+ * Main code of worker thread, dequeues tasks and executes them.
+ */
 void *worker(void *param) {
-    // execute the task
-    // todo: loop with semaphore and dequeue
-    // while (1) {
-        task workload = dequeue();
-    
-        execute(workload.function, workload.data);
-    // }
+    while (1) {
+        // Remove a tarefa da fila (bloqueia se estiver vazia)
+        task_t workload = queue_pop(&global_queue);
 
-    pthread_exit(0);
+        // Verifica "Poison Pill" (sinal para encerrar a thread)
+        if (workload.function == NULL) {
+            break;
+        }
+
+        // Executa a tarefa
+        execute(workload.function, workload.data);
+    }
+
+    pthread_exit(NULL);
 }
 
 /**
  * Submits function `func` to the pool with parameters `p`.
- *
- * @param func function to be submitted to the pool
- * @param p parameter to the function
- * @return 0 if success
  */
 int pool_submit(void (*func)(void *p), void *p) {
-    // todo: submit with enqueue
-    queue_tasks->function = func;
-    queue_tasks->data = p;
+    // Cria a tarefa
+    task_t new_task;
+    new_task.function = func;
+    new_task.data = p;
+
+    // Insere na fila (substitui o antigo enqueue com TODO)
+    queue_push(&global_queue, new_task);
 
     return 0;
 }
 
 /**
  * Maps the function `func` to the array `arr` `n` times.
- *
- * @param func function to be submitted to the pool
- * @param arr array of parameters to map to the function
- * @param n num
- * @return 0 if success submitting all parameters
  */
 int pool_map(void (*func)(void *p), void **arr, const int n) {
     int r = -1;
@@ -112,43 +68,49 @@ int pool_map(void (*func)(void *p), void **arr, const int n) {
         r = pool_submit(func, arr[i]);
         if (r != 0) return r;
     }
-
     return r;
 }
 
 /**
- *  Initializes the pool.
- *
- * @param _n_threads number of threads in the pool.
- * @return 0 if success creating all threads
+ * Initializes the pool.
  */
 int pool_init(const int _n_threads) {
     n_threads = _n_threads;
     array_threads = (pthread_t *) malloc(n_threads * sizeof(pthread_t));
-    // if `sizeof(pthread_t)` doesn't work, use #define PTHREAD_SIZE sizeof(unsigned long int)
-    int r=-1;
+    
+    // Inicializa a fila (mutexes e semáforos internos)
+    queue_init(&global_queue);
 
+    int r = -1;
     for (int i=0; i<n_threads; i++) {
         r = pthread_create(&array_threads[i], NULL, worker, NULL);
         if (r != 0) return r;
     }
 
-    sem_init(&semaphore_tasks, 0, 0);  // inits semaphore with 0 tasks
-    // todo: init queue
-
-    return r;
+    return 0; // Sucesso
 }
 
-// shutdown the thread pool
+/**
+ * Shutdown the thread pool.
+ */
 int pool_shutdown(void) {
-    int r=-1;
+    int r = -1;
+
+    // 1. Envia "Poison Pills" para parar os workers
+    // Envia uma tarefa vazia para cada thread, forçando elas a saírem do loop
+    for (int i = 0; i < n_threads; i++) {
+        pool_submit(NULL, NULL);
+    }
+
+    // 2. Espera as threads terminarem
     for (int i=0; i<n_threads; i++) {
-        r = pthread_join(array_threads[i], NULL);  // todo: substituir NULL por thread retval
+        r = pthread_join(array_threads[i], NULL); // todo: substituir NULL por thread retval se necessario
         if (r != 0) return r;
     }
 
+    // 3. Limpeza de memória
     free(array_threads);
-    sem_destroy(&semaphore_tasks);
+    queue_destroy(&global_queue);
 
-    return r;
+    return 0;
 }
