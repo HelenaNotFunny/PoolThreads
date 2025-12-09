@@ -1,0 +1,42 @@
+# --- Diretórios de Build (Gerados pelo Makefile) ---
+bin/
+obj/
+
+# --- Arquivos Compilados e Objetos (Segurança extra) ---
+*.o
+*.a
+*.so
+*.exe
+*.out
+
+# O nome do nosso executável (caso seja compilado fora da pasta bin)
+app
+
+# --- Arquivos do Sistema Operacional ---
+.DS_Store
+Thumbs.db
+
+# --- Arquivos Temporários de Editores e IDEs ---
+# VS Code
+.vscode/
+
+# IntelliJ / CLion
+.idea/
+cmake-build-*/
+
+# Vim / Emacs / Nano
+*.swp
+*~
+*.swo
+
+# --- Arquivos Gerados pelo Relatório (LaTeX/Word) ---
+# Se estiver fazendo o relatório em LaTeX, ignore os temporários:
+*.aux
+*.log
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Arquivos temporários do Word
+~$*.doc*

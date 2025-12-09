@@ -1,25 +1,54 @@
+# Compilador e Flags
 CC = gcc
-CFLAGS = -Wall -pthread -g
+CFLAGS = -Wall -Wextra -pthread -g -I./include
 
-# Agora usamos client.o em vez de main.o
-OBJS = client.o threadpool.o queue.o
+# Estrutura de Pastas
+INCDIR = include
+SRCDIR = src
+APPDIR = apps
+OBJDIR = obj
+BINDIR = bin
 
-# Alvo principal (gera o executável 'app')
-app: $(OBJS)
-	$(CC) $(CFLAGS) -o app $(OBJS)
+# Onde vai ficar o executável final
+TARGET = $(BINDIR)/app
 
-# Regra para o client.c
-client.o: client.c threadpool.h
-	$(CC) $(CFLAGS) -c client.c
+# Lista de arquivos fontes da biblioteca (src/*.c)
+SOURCES = $(wildcard $(SRCDIR)/*.c)
+# Lista de objetos da biblioteca (obj/*.o)
+OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
-# Regra para o threadpool (depende da queue)
-threadpool.o: threadpool.c threadpool.h queue.h
-	$(CC) $(CFLAGS) -c threadpool.c
+# O objeto do cliente é separado
+CLIENT_SRC = $(APPDIR)/client.c
+CLIENT_OBJ = $(OBJDIR)/client.o
 
-# Regra para a fila
-queue.o: queue.c queue.h
-	$(CC) $(CFLAGS) -c queue.c
+# --- Regras de Compilação ---
 
-# Limpeza
+# Regra padrão: cria o executável
+all: directories $(TARGET)
+
+# Cria o executável linkando tudo (Lib + Cliente)
+$(TARGET): $(OBJECTS) $(CLIENT_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+# Compila os arquivos da biblioteca (.c -> .o)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compila o cliente (.c -> .o)
+$(CLIENT_OBJ): $(CLIENT_SRC)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Cria as pastas de build se não existirem
+directories:
+	@mkdir -p $(OBJDIR)
+	@mkdir -p $(BINDIR)
+
+# Limpa tudo
 clean:
-	rm -f *.o app
+	rm -rf $(OBJDIR) $(BINDIR)
+
+# Atalho para rodar
+run: all
+	./$(TARGET)
+
+.PHONY: all clean directories run
