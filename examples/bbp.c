@@ -23,9 +23,10 @@ double kth_term(const int k) {
     );
 }
 
-void compute_k(const int k) {
+void compute_k(void *arg) {
+    int k = *(int*)arg;
     pthread_mutex_lock(&mutex_acc);
-    acc = kth_term(k);
+    acc += kth_term(k);
     pthread_mutex_unlock(&mutex_acc);
 }
 
@@ -39,17 +40,19 @@ int main(const int argc, const char* argv[]) {
 
     // creates and populates the vector of k
     int vec_k[n_terms];
+    void *pointer_vec[n_terms]; // a vector that points to vec_k
     for (int k = 0; k < n_terms; k++) {
         vec_k[k] = k;
+        pointer_vec[k] = &vec_k[k];
     }
 
     pool_init(atoi(argv[1]));  // n_threads
 
-    pool_map(&compute_k, &vec_k, n_terms);
+    pool_map(compute_k, pointer_vec, n_terms);
 
     pool_shutdown();
 
-    printf("Value of pi computed with %d terms: %f\n", n_terms, acc);
+    printf("Value of pi computed with %d terms: %.15f\n", n_terms, acc);
 
     return 0;
 }

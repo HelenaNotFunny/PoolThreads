@@ -51,6 +51,6 @@ clean:
 
 # Atalho para rodar
 run: all
-	./$(TARGET)
+	./$(TARGET) $(NTHREADS) $(NTERMS)
 
 .PHONY: all clean directories run
