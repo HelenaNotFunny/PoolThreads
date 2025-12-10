@@ -19,7 +19,7 @@ static atomic_queue_t task_queue;
  * Main code of worker thread.
  * Dequeues tasks and executes them until a Poison Pill is received.
  */
-static void *worker_routine(void *arg) {
+static void *worker_routine(void *) {
     while (1) {
         // Bloqueia até haver uma tarefa disponível
         task_t current_task = queue_pop(&task_queue);
