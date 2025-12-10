@@ -35,7 +35,7 @@ int main(const int argc, const char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    int n_terms = (int) &argv[2];  // n_terms
+    int n_terms = atoi(argv[2]);  // n_terms
 
     // creates and populates the vector of k
     int vec_k[n_terms];
@@ -43,7 +43,7 @@ int main(const int argc, const char* argv[]) {
         vec_k[k] = k;
     }
 
-    pool_init((int) argv[1]);  // n_threads
+    pool_init(atoi(argv[1]));  // n_threads
 
     pool_map(&compute_k, &vec_k, n_terms);
 

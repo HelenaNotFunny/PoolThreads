@@ -30,7 +30,7 @@ all: directories $(TARGET)
 
 # Cria o executável linkando tudo (Lib + Cliente)
 $(TARGET): $(OBJECTS) $(CLIENT_OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 # Compila os arquivos da biblioteca (.c -> .o)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
