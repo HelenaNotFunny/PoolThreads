@@ -18,8 +18,10 @@ SOURCES = $(wildcard $(SRCDIR)/*.c)
 OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
 # O objeto do cliente é separado
-CLIENT_SRC = $(EXMDIR)/client.c
-CLIENT_OBJ = $(OBJDIR)/client.o
+CLIENT_SRC = $(EXMDIR)/bbp.c
+CLIENT_OBJ = $(OBJDIR)/bbp.o
+#CLIENT_SRC = $(EXMDIR)/client.c
+#CLIENT_OBJ = $(OBJDIR)/client.o
 
 # --- Regras de Compilação ---
 
@@ -28,7 +30,7 @@ all: directories $(TARGET)
 
 # Cria o executável linkando tudo (Lib + Cliente)
 $(TARGET): $(OBJECTS) $(CLIENT_OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 # Compila os arquivos da biblioteca (.c -> .o)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
@@ -49,6 +51,6 @@ clean:
 
 # Atalho para rodar
 run: all
-	./$(TARGET)
+	./$(TARGET) $(NTHREADS) $(NTERMS)
 
 .PHONY: all clean directories run

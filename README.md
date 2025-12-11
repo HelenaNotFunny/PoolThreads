@@ -95,13 +95,13 @@ make
 O executável final será gerado dentro da pasta `bin`. Execute com:
 
 ```bash
-./bin/client
+./bin/client num_threads num_termos
 ```
 
 *Ou, se o Makefile tiver a regra de conveniência:*
 
 ```bash
-make run
+make run NTHREADS=num_threads NTERMS=num_termos
 ```
 
 -----
