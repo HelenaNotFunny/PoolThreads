@@ -59,7 +59,9 @@ int pool_init(const int num_threads) {
 
     return 0;
 }
-
+/*
+ Cria uma tarefa utilizando o tipo task e o adiciona ao fim da fila instanciada no contexto do programa.
+*/
 int pool_submit(void (*func)(void *arg), void *arg) {
     task_t new_task;
     new_task.function = func;
@@ -69,6 +71,9 @@ int pool_submit(void (*func)(void *arg), void *arg) {
     return 0;
 }
 
+/*
+ Designa para num_items threads na pool uma tarefa func.
+*/
 int pool_map(void (*func)(void *arg), void **args, const int num_items) {
     for (int i = 0; i < num_items; i++) {
         // Se houver erro no submit, retornamos (embora submit atual retorne sempre 0)
