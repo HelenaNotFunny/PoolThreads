@@ -1,173 +1,148 @@
 # 🧵 C Threadpool Library
 
-Uma implementação robusta e eficiente de uma **Threadpool (Pool de Threads)** em linguagem C.
+🇧🇷 [Leia em Português](README.pt-BR.md)
 
-Este projeto demonstra o uso de **concorrência**, **sincronização** (mutexes e variáveis de condição) e o padrão **Produtor-Consumidor** para gerenciar tarefas assíncronas de forma eficiente, evitando o overhead de criar e destruir threads repetidamente.
+A simple and efficient C library for managing a pool of worker threads using pthreads. It provides a lightweight task queue for asynchronous execution in multi-threaded applications.
 
------
+This project demonstrates key concepts such as **concurrency**, **synchronization** (mutexes and condition variables), and the **Producer–Consumer** pattern, reducing the overhead of repeatedly creating and destroying threads.
 
-## 📑 Índice
+---
 
-  - [Sobre o Projeto](https://www.google.com/search?q=%23-sobre-o-projeto)
-  - [Estrutura de Diretórios](https://www.google.com/search?q=%23-estrutura-de-diret%C3%B3rios)
-  - [Pré-requisitos](https://www.google.com/search?q=%23-pr%C3%A9-requisitos)
-  - [Como Compilar e Executar](https://www.google.com/search?q=%23-como-compilar-e-executar)
-  - [Como Usar a Biblioteca](https://www.google.com/search?q=%23-como-usar-a-biblioteca)
-  - [Limpeza e Recompilação](https://www.google.com/search?q=%23-limpeza-e-recompila%C3%A7%C3%A3o)
-  - [Autoria](https://www.google.com/search?q=%23-autoria)
+## 📑 Table of Contents
 
------
+- [About the Project](#about-the-project)
+- [Directory Structure](#directory-structure)
+- [Prerequisites](#prerequisites)
+- [Build and Run](#build-and-run)
+- [Usage](#usage)
+- [Clean and Rebuild](#clean-and-rebuild)
+- [Authors](#authors)
 
-## 📖 Sobre o Projeto
+---
 
-Uma **Threadpool** mantém um conjunto de threads "trabalhadoras" (workers) ativas, esperando por tarefas em uma fila segura (thread-safe queue). Quando uma tarefa é submetida:
+## 📖 About the Project
 
-1.  Ela é adicionada à fila.
-2.  Uma thread disponível a retira e executa.
-3.  Ao terminar, a thread volta a ficar disponível para a próxima tarefa.
+A **thread pool** maintains a set of worker threads that continuously wait for tasks in a thread-safe queue. When a task is submitted:
 
-**Principais funcionalidades:**
+1. It is added to the queue.
+2. An available worker thread retrieves and executes it.
+3. After completion, the thread returns to the pool, ready for the next task.
 
-  * Criação dinâmica de N threads.
-  * Fila de tarefas thread-safe.
-  * Encerramento gracioso (Graceful Shutdown): aguarda as tarefas terminarem antes de fechar.
+### Key Features
 
------
+- Dynamic creation of worker threads.
+- Thread-safe task queue.
+- Graceful shutdown (waits for all tasks to complete before terminating).
 
-## 📂 Estrutura de Diretórios
+---
 
-O projeto segue uma arquitetura modular para separar a implementação da biblioteca, a interface pública e a aplicação cliente.
+## 📂 Directory Structure
 
 ```plaintext
 threadpool_project/
-├── include/            # CABEÇALHOS PÚBLICOS
-│   ├── threadpool.h    # Contratos da API da Threadpool
-│   └── atomic_queue.h  # Definições da Fila (estrutura interna)
+├── include/            # Public headers
+│   ├── threadpool.h    # Threadpool API
+│   └── atomic_queue.h  # Internal queue definitions
 │
-├── src/                # CÓDIGO FONTE DA BIBLIOTECA
-│   ├── threadpool.c    # Lógica das threads, workers e sync
-│   └── atomic_queue.c  # Implementação da fila thread-safe
+├── src/                # Library source code
+│   ├── threadpool.c    # Thread and synchronization logic
+│   └── atomic_queue.c  # Thread-safe queue implementation
 │
-├── examples/           # APLICAÇÃO CLIENTE
-│   └── client.c        # Main: Exemplo de uso da biblioteca
+├── examples/           # Example client application
+│   └── client.c        # Usage example
 │
-├── docs/               # DOCUMENTAÇÃO
-│   └── ...             # Diagramas e documentação Doxygen
+├── docs/               # Documentation (e.g., diagrams, Doxygen)
+├── report/             # Academic report / performance analysis
+│   └── relatorio.pdf
 │
-├── report/             # RELATÓRIOS
-│   └── relatorio.pdf   # Análise de desempenho/descrição acadêmica
+├── obj/                # Object files (generated)
+├── bin/                # Executables (generated)
+│   └── client
 │
-├── obj/                # OBJETOS TEMPORÁRIOS (Gerado pelo Make)
-│   └── *.o             # Arquivos compilados intermédios
-│
-├── bin/                # EXECUTÁVEIS (Gerado pelo Make)
-│   └── client          # O binário final pronto para rodar
-│
-└── Makefile            # AUTOMAÇÃO DE BUILD
+└── Makefile            # Build automation
 ```
 
------
+---
 
-## ⚙️ Pré-requisitos
+## ⚙️ Prerequisites
 
-  * **GCC** (GNU Compiler Collection) ou compatível.
-  * **Make** (Ferramenta de automação de build).
-  * Ambiente **Linux/Unix** (devido ao uso da `pthread.h`).
+- **GCC** (or a compatible C compiler)
+- **Make**
+- **Linux/Unix environment** (due to `pthread.h`)
 
------
+---
 
-## 🚀 Como Compilar e Executar
+## 🚀 Build and Run
 
-Utilizamos um `Makefile` configurado para gerenciar as dependências e diretórios automaticamente.
-
-### 1\. Compilar todo o projeto
-
-No terminal, na raiz do projeto (`threadpool_project/`), execute:
+### Compile
 
 ```bash
 make
 ```
 
-*Isso criará automaticamente as pastas `obj/` e `bin/` se elas não existirem e compilará o executável.*
-
-### 2\. Rodar a aplicação
-
-O executável final será gerado dentro da pasta `bin`. Execute com:
+### Run
 
 ```bash
-./bin/client num_threads num_termos
+./bin/client <num_threads> <num_terms>
 ```
 
-*Ou, se o Makefile tiver a regra de conveniência:*
+Or using the convenience rule:
 
 ```bash
-make run NTHREADS=num_threads NTERMS=num_termos
+make run NTHREADS=<num_threads> NTERMS=<num_terms>
 ```
 
------
+---
 
-## 🧹 Limpeza e Recompilação
-
-Para limpar arquivos temporários (`.o`) e o executável final (útil para garantir uma recompilação limpa):
+## 🧹 Clean and Rebuild
 
 ```bash
 make clean
 ```
 
------
+---
 
-## 💻 Como Usar a Biblioteca
-
-Abaixo um exemplo simplificado de como utilizar a API no seu `examples/client.c`:
+## 💻 Usage
 
 ```c
 #include <stdio.h>
 #include <unistd.h>
 #include "threadpool.h"
 
-// Função que as threads irão executar
-void minha_tarefa(void* arg) {
+// Task executed by worker threads
+void my_task(void* arg) {
     int* num = (int*)arg;
-    printf("Thread processando numero: %d\n", *num);
-    sleep(1); // Simula trabalho pesado
+    printf("Processing number: %d\n", *num);
+    sleep(1); // Simulate workload
 }
 
 int main() {
-    // 1. Cria uma pool com 4 threads
     threadpool_t* pool = threadpool_create(4);
 
-    // 2. Submete tarefas
-    int dados[10];
-    for(int i = 0; i < 10; i++) {
-        dados[i] = i;
-        threadpool_add(pool, minha_tarefa, &dados[i]);
+    int data[10];
+    for (int i = 0; i < 10; i++) {
+        data[i] = i;
+        threadpool_add(pool, my_task, &data[i]);
     }
 
-    // 3. Destrói a pool (aguarda o fim das tarefas)
     threadpool_destroy(pool);
-
     return 0;
 }
 ```
 
------
+---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
-  * **C Standard (C99/C11)**
-  * **POSIX Threads (pthreads)**: Para gerenciamento de threads e mutexes.
-  * **Make**: Para orquestração da compilação.
+- **C (C99/C11)**
+- **POSIX Threads (pthreads)**
+- **Make**
 
------
+---
 
-## ✒️ Autoria
+## ✒️ Authors
 
-Desenvolvido por:
-
-- MARIA HELENA FERNANDES LEOCÁDIO - [HelenaNotFunny](https://github.com/HelenaNotFunny)
-- ICARO BRUNO SILBE CORTÊS - [icarob-eng](https://github.com/icarob-eng)
-- GABRIEL SEBASTIÃO DO NASCIMENTO NETO - [gabriel26077](https://github.com/gabriel26077)
-- RODRIGO DE MENEZES SOUZA - [DPDck972](https://github.com/DPDck972)
-
------
-
+- Maria Helena Fernandes Leocádio - [HelenaNotFunny](https://github.com/HelenaNotFunny)
+- Icaro Bruno Silbe Cortês - [icarob-eng](https://github.com/icarob-eng)
+- Gabriel Sebastião do Nascimento Neto - [gabriel26077](https://github.com/gabriel26077)
+- Rodrigo de Menezes Souza - [DPDck972](https://github.com/DPDck972)
