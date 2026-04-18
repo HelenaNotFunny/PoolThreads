@@ -162,7 +162,12 @@ int main() {
 
 ## ✒️ Autoria
 
-Desenvolvido por **[Nossos nomes (lembrar de por depois)]**.
+Desenvolvido por:
+
+- MARIA HELENA FERNANDES LEOCÁDIO - [HelenaNotFunny](https://github.com/HelenaNotFunny)
+- ICARO BRUNO SILBE CORTÊS - [icarob-eng](https://github.com/icarob-eng)
+- GABRIEL SEBASTIÃO DO NASCIMENTO NETO - [gabriel26077](https://github.com/gabriel26077)
+- RODRIGO DE MENEZES SOUZA - [DPDck972](https://github.com/DPDck972)
 
 -----
 
